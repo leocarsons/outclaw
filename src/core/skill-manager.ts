@@ -2,9 +2,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { SkillParser, generateSkillMd } from '../parsers/skill-parser.js';
 import {
-  getSkillsPath,
-  getSkillPath,
-  getManifestPath,
+  getSkillsPathAsync,
+  getSkillPathAsync,
+  getLockFilePathAsync,
   ensureDir,
   pathExists,
   type Scope,
@@ -38,11 +38,17 @@ export interface InstallOptions {
 
 export class SkillManager {
   private scope: Scope;
-  private basePath: string;
+  private basePath: string | null = null;
 
   constructor(scope: Scope = 'project') {
     this.scope = scope;
-    this.basePath = getSkillsPath(scope);
+  }
+
+  private async getBasePath(): Promise<string> {
+    if (!this.basePath) {
+      this.basePath = await getSkillsPathAsync(this.scope);
+    }
+    return this.basePath;
   }
 
   /**
@@ -50,15 +56,16 @@ export class SkillManager {
    */
   async listSkills(): Promise<SkillInfo[]> {
     const skills: SkillInfo[] = [];
+    const basePath = await this.getBasePath();
 
     try {
-      const dirs = await fs.readdir(this.basePath);
+      const dirs = await fs.readdir(basePath);
 
       for (const dir of dirs) {
         // Skip hidden files and manifest
         if (dir.startsWith('.')) continue;
 
-        const skillPath = path.join(this.basePath, dir);
+        const skillPath = path.join(basePath, dir);
         const stat = await fs.stat(skillPath);
 
         if (stat.isDirectory()) {
@@ -82,7 +89,7 @@ export class SkillManager {
    * Get a specific skill by name
    */
   async getSkill(name: string): Promise<SkillInfo | null> {
-    const skillPath = getSkillPath(name, this.scope);
+    const skillPath = await getSkillPathAsync(name, this.scope);
 
     try {
       const parser = new SkillParser(skillPath);
@@ -97,7 +104,7 @@ export class SkillManager {
    * Check if a skill exists
    */
   async skillExists(name: string): Promise<boolean> {
-    const skillPath = getSkillPath(name, this.scope);
+    const skillPath = await getSkillPathAsync(name, this.scope);
     return await pathExists(path.join(skillPath, 'SKILL.md'));
   }
 
@@ -105,7 +112,7 @@ export class SkillManager {
    * Create a new skill
    */
   async createSkill(options: CreateSkillOptions): Promise<string> {
-    const skillPath = getSkillPath(options.name, options.scope);
+    const skillPath = await getSkillPathAsync(options.name, options.scope);
 
     // Check if skill already exists
     if (await pathExists(skillPath)) {
@@ -162,7 +169,7 @@ export class SkillManager {
     skillMdContent: string,
     options: InstallOptions
   ): Promise<string> {
-    const skillPath = getSkillPath(name, this.scope);
+    const skillPath = await getSkillPathAsync(name, this.scope);
 
     // Check if skill already exists
     if (!options.force && (await pathExists(skillPath))) {
@@ -185,7 +192,7 @@ export class SkillManager {
    * Uninstall a skill
    */
   async uninstallSkill(name: string): Promise<void> {
-    const skillPath = getSkillPath(name, this.scope);
+    const skillPath = await getSkillPathAsync(name, this.scope);
 
     if (!(await pathExists(skillPath))) {
       throw new Error(`Skill "${name}" not found`);
@@ -199,7 +206,7 @@ export class SkillManager {
    * Get manifest
    */
   async getManifest(): Promise<OutclawManifest> {
-    const manifestPath = getManifestPath(this.scope);
+    const manifestPath = await getLockFilePathAsync(this.scope);
 
     try {
       const content = await fs.readFile(manifestPath, 'utf-8');
@@ -213,7 +220,7 @@ export class SkillManager {
    * Update manifest with new skill
    */
   private async updateManifest(name: string, source: SkillSource): Promise<void> {
-    const manifestPath = getManifestPath(this.scope);
+    const manifestPath = await getLockFilePathAsync(this.scope);
     const manifest = await this.getManifest();
 
     const entry: SkillManifest = {
@@ -240,7 +247,7 @@ export class SkillManager {
    * Remove skill from manifest
    */
   private async removeFromManifest(name: string): Promise<void> {
-    const manifestPath = getManifestPath(this.scope);
+    const manifestPath = await getLockFilePathAsync(this.scope);
 
     try {
       const content = await fs.readFile(manifestPath, 'utf-8');
