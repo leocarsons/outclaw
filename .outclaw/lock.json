@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "name": "Sonos Speaker Control Framework",
+      "version": "1.0.0",
+      "installedAt": "2026-02-05T08:10:22.315Z",
+      "source": {
+        "type": "registry",
+        "id": "28d2af43-e44e-45b4-b9f2-9a0277e0e1e7"
+      },
+      "scope": "project"
+    }
+  ]
+}

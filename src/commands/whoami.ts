@@ -35,10 +35,11 @@ export async function whoamiCommand(options: WhoamiOptions): Promise<void> {
     }
 
     logger.info('');
-    logger.info(`  Agent:    ${agent.name}`);
-    logger.info(`  ID:       ${agent.id}`);
-    logger.info(`  Verified: ${agent.verified ? '✓ Yes' : '✗ No'}`);
-    logger.info(`  API Key:  ${config.api_key?.substring(0, 10)}...`);
+    logger.box(`Agent: ${agent.name}`, [
+      `ID:       ${agent.id}`,
+      `Verified: ${agent.verified ? '✓ Yes' : '✗ No'}`,
+      `API Key:  ${config.api_key?.substring(0, 10)}...`,
+    ].join('\n'));
     logger.info('');
 
     if (!agent.verified) {

@@ -305,9 +305,14 @@ export async function installCommand(specifier: string, options: InstallOptions)
       source: skillSource,
     });
 
-    spin.succeed(`Installed ${name} to ${skillPath}`);
+    spin.succeed(`Installed ${name}`);
     logger.info('');
-    logger.dim(`Use /${name} in Claude Code to invoke this skill`);
+    logger.box(`Skill Installed: ${name}`, [
+      `Path:  ${skillPath}`,
+      `Scope: ${scope}`,
+      '',
+      `Use /${name} in OpenClaw to invoke this skill`,
+    ].join('\n'));
   } catch (error) {
     spin.fail('Installation failed');
 

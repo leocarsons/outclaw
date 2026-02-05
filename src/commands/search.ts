@@ -1,5 +1,6 @@
 import { logger } from '../ui/logger.js';
 import { spinner } from '../ui/spinner.js';
+import { renderTable } from '../ui/table.js';
 import { ApiClient, ApiError } from '../core/api-client.js';
 
 export interface SearchOptions {
@@ -37,19 +38,19 @@ export async function searchCommand(query: string, options: SearchOptions): Prom
 
     logger.info(`Found ${result.total} skill(s)${result.total > result.workflows.length ? ` (showing ${result.workflows.length})` : ''}:\n`);
 
-    for (const workflow of result.workflows) {
-      const author = workflow.creator?.twitter_handle
-        ? `@${workflow.creator.twitter_handle}`
-        : workflow.creator?.name || 'unknown';
+    renderTable({
+      headers: ['Name', 'Author', 'Downloads', 'Description'],
+      rows: result.workflows.map((w) => {
+        const author = w.creator?.twitter_handle
+          ? `@${w.creator.twitter_handle}`
+          : w.creator?.name || 'unknown';
+        const desc = w.description.length > 40 ? w.description.slice(0, 37) + '...' : w.description;
+        return [w.title, author, String(w.downloads || 0), desc];
+      }),
+    });
 
-      logger.skill({
-        name: workflow.title,
-        description: workflow.description,
-        author,
-        downloads: workflow.downloads,
-        installCmd: `outclaw install ${workflow.id}`,
-      });
-    }
+    logger.info('');
+    logger.dim('Install with: outclaw install <name>');
 
     if (result.pages > 1) {
       logger.info('');

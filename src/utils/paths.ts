@@ -6,24 +6,24 @@ export type Scope = 'global' | 'project';
 
 /**
  * Get the skills directory path for a given scope
- * - global: ~/.openclaw/skills/
+ * - global: ~/.openclaw/workspace/skills/
  * - project: ./skills/ (current working directory)
  */
 export function getSkillsPath(scope: Scope): string {
   if (scope === 'global') {
-    return path.join(os.homedir(), '.openclaw', 'skills');
+    return path.join(os.homedir(), '.openclaw', 'workspace', 'skills');
   }
   return path.join(process.cwd(), 'skills');
 }
 
 /**
  * Get the lock file path for a given scope
- * - global: ~/.openclaw/lock.json
+ * - global: ~/.openclaw/workspace/lock.json
  * - project: .outclaw/lock.json
  */
 export function getLockFilePath(scope: Scope): string {
   if (scope === 'global') {
-    return path.join(os.homedir(), '.openclaw', 'lock.json');
+    return path.join(os.homedir(), '.openclaw', 'workspace', 'lock.json');
   }
   return path.join(process.cwd(), '.outclaw', 'lock.json');
 }
