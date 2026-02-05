@@ -1,0 +1,32 @@
+---
+name: {{name}}
+description: {{description}}
+version: 1.0.0
+{{#if disableModelInvocation}}
+disable-model-invocation: true
+{{/if}}
+{{#if userInvocable}}
+user-invocable: true
+{{/if}}
+{{#if allowedTools}}
+allowed-tools: {{allowedTools}}
+{{/if}}
+{{#if argumentHint}}
+argument-hint: {{argumentHint}}
+{{/if}}
+{{#if context}}
+context: {{context}}
+{{/if}}
+---
+
+# {{name}}
+
+Your skill instructions here...
+
+## Usage
+
+Describe how to use this skill and what it does.
+
+## Examples
+
+Provide examples of when this skill should be triggered.
