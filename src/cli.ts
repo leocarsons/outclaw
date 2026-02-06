@@ -9,8 +9,9 @@ import { loginCommand } from './commands/login.js';
 import { logoutCommand } from './commands/logout.js';
 import { whoamiCommand } from './commands/whoami.js';
 import { publishCommand } from './commands/publish.js';
+import { forkCommand } from './commands/fork.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.4';
 
 export const cli = new Command();
 
@@ -124,6 +125,18 @@ cli
   .option('-y, --yes', 'Skip confirmation prompt')
   .action(async (path, options) => {
     await publishCommand(path, options);
+  });
+
+// fork command - import skills from ClawHub
+cli
+  .command('fork <slug>')
+  .description('Fork a skill from ClawHub and publish to Outclaws')
+  .option('-v, --version <version>', 'Specific version to fork')
+  .option('-t, --title <title>', 'Override skill title')
+  .option('-d, --description <desc>', 'Override skill description')
+  .option('-y, --yes', 'Skip confirmation prompt')
+  .action(async (slug, options) => {
+    await forkCommand(slug, options);
   });
 
 // Handle unknown commands
