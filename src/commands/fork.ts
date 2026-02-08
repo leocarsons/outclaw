@@ -170,7 +170,7 @@ export async function forkCommand(slug: string, options: ForkOptions): Promise<v
 
     // 4. Show info
     const parsed = parseSkillFrontmatter(skillMdContent);
-    const title = options.title || skillMeta.displayName || (parsed.frontmatter?.name as string) || slug;
+    const title = options.title || slug;
     const description = options.description || skillMeta.summary || (parsed.frontmatter?.description as string) || '';
 
     logger.info('');

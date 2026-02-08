@@ -11,7 +11,7 @@ import { whoamiCommand } from './commands/whoami.js';
 import { publishCommand } from './commands/publish.js';
 import { forkCommand } from './commands/fork.js';
 
-const VERSION = '0.2.4';
+const VERSION = '0.2.5';
 
 export const cli = new Command();
 
