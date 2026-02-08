@@ -1,6 +1,6 @@
 {
   "name": "outclaw",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "CLI tool for managing OpenClaw Skills - Install, publish and manage skills from Outclaws registry",
   "type": "module",
   "main": "./dist/index.js",

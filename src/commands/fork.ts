@@ -39,7 +39,14 @@ async function fetchClawHubSkill(slug: string): Promise<{
     throw new Error(`ClawHub API error: ${response.status} ${response.statusText}`);
   }
 
-  return (await response.json()) as any;
+  const data = (await response.json()) as any;
+  // ClawHub returns { skill: { slug, displayName, summary, ... }, latestVersion: { version, ... } }
+  return {
+    slug: data.skill?.slug || slug,
+    displayName: data.skill?.displayName,
+    summary: data.skill?.summary,
+    latestVersion: data.latestVersion,
+  };
 }
 
 /**
@@ -170,7 +177,7 @@ export async function forkCommand(slug: string, options: ForkOptions): Promise<v
 
     // 4. Show info
     const parsed = parseSkillFrontmatter(skillMdContent);
-    const title = options.title || slug;
+    const title = options.title || skillMeta.displayName || slug;
     const description = options.description || skillMeta.summary || (parsed.frontmatter?.description as string) || '';
 
     logger.info('');
